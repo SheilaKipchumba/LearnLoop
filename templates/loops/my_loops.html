@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block title %}My Loops - LearnLoop{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h1>My Loops</h1>
+        <p class="text-muted">Manage all the loops you've created</p>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{% url 'create_loop' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Create New Loop
+        </a>
+    </div>
+</div>
+
+{% if loops %}
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Difficulty</th>
+                <th>Created</th>
+                <th>Views</th>
+                <th>Likes</th>
+                <th>Comments</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for loop in loops %}
+            <tr>
+                <td>
+                    <a href="{% url 'loop_detail' loop.pk %}" class="text-decoration-none">
+                        {{ loop.title|truncatechars:40 }}
+                    </a>
+                </td>
+                <td><span class="badge bg-primary">{{ loop.get_category_display }}</span></td>
+                <td><span class="badge bg-secondary">{{ loop.get_difficulty_display }}</span></td>
+                <td>{{ loop.created_at|date:"M d, Y" }}</td>
+                <td>{{ loop.views }}</td>
+                <td>{{ loop.likes.count }}</td>
+                <td>{{ loop.comments.count }}</td>
+                <td>
+                    {% if loop.is_premium %}
+                    <span class="badge bg-warning text-dark">Premium</span>
+                    {% else %}
+                    <span class="badge bg-success">Free</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <div class="btn-group btn-group-sm">
+                        <a href="{% url 'loop_detail' loop.pk %}" class="btn btn-outline-primary">
+                            <i class="bi bi-eye"></i>
+                        </a>
+                        <a href="{% url 'edit_loop' loop.pk %}" class="btn btn-outline-warning">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <a href="{% url 'delete_loop' loop.pk %}" class="btn btn-outline-danger">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h6>Statistics</h6>
+                <p class="mb-1">Total Loops: {{ loops.count }}</p>
+                {% with total_views=loops.aggregate.total_views total_likes=loops.aggregate.total_likes %}
+                <p class="mb-1">Total Views: {{ total_views|default:"0" }}</p>
+                <p class="mb-0">Total Likes: {{ total_likes|default:"0" }}</p>
+                {% endwith %}
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="alert alert-info">
+    <h4 class="alert-heading">You haven't created any loops yet!</h4>
+    <p>Share your knowledge with the community by creating your first loop.</p>
+    <a href="{% url 'create_loop' %}" class="btn btn-primary">Create Your First Loop</a>
+</div>
+{% endif %}
+{% endblock %}

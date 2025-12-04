@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - LearnLoop{% endblock %}
+
+{% block content %}
+<div class="text-center py-5">
+    <h1 class="display-4">🎯 Welcome to LearnLoop!</h1>
+    <p class="lead">Peer-to-peer micro-learning platform for students.</p>
+    
+    <div class="mt-5">
+        <a href="{% url 'loops_list' %}" class="btn btn-primary btn-lg me-3">
+            <i class="bi bi-compass"></i> Browse Loops
+        </a>
+        <a href="{% url 'create_loop' %}" class="btn btn-success btn-lg">
+            <i class="bi bi-plus-circle"></i> Create Loop
+        </a>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5><i class="bi bi-lightbulb"></i> Create</h5>
+                <p>Share your knowledge in bite-sized lessons.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5><i class="bi bi-search"></i> Discover</h5>
+                <p>Find micro-lessons on any topic.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5><i class="bi bi-people"></i> Connect</h5>
+                <p>Learn from peers across campuses.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

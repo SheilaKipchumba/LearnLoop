@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete {{ loop.title }} - LearnLoop{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h3 class="card-title mb-0">
+                    <i class="bi bi-exclamation-triangle"></i> Delete Loop
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning">
+                    <h5 class="alert-heading">Warning!</h5>
+                    <p>You are about to delete the loop: <strong>{{ loop.title }}</strong></p>
+                    <p class="mb-0">This action cannot be undone. All comments and likes associated with this loop will also be deleted.</p>
+                </div>
+                
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h6>Loop Details:</h6>
+                        <p><strong>Title:</strong> {{ loop.title }}</p>
+                        <p><strong>Category:</strong> {{ loop.get_category_display }}</p>
+                        <p><strong>Created:</strong> {{ loop.created_at|date:"F d, Y" }}</p>
+                        <p><strong>Likes:</strong> {{ loop.likes.count }}</p>
+                        <p><strong>Comments:</strong> {{ loop.comments.count }}</p>
+                    </div>
+                </div>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'loop_detail' loop.pk %}" class="btn btn-outline-secondary me-md-2">Cancel</a>
+                        <button type="submit" class="btn btn-danger">Delete Permanently</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

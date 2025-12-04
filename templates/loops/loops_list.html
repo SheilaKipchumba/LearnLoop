@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+
+{% block title %}Browse Loops - LearnLoop{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h1>Browse Learning Loops</h1>
+        <p class="text-muted">Discover micro-lessons created by students</p>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{% url 'create_loop' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Create New Loop
+        </a>
+    </div>
+</div>
+
+<!-- Search and Filters -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-4">
+                <input type="text" name="q" class="form-control" placeholder="Search loops..." 
+                       value="{{ request.GET.q|default:'' }}">
+            </div>
+            <div class="col-md-3">
+                <select name="category" class="form-select">
+                    <option value="all">All Categories</option>
+                    {% for value, label in categories %}
+                        <option value="{{ value }}" {% if current_category == value %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="difficulty" class="form-select">
+                    <option value="all">All Levels</option>
+                    {% for value, label in difficulties %}
+                        <option value="{{ value }}" {% if current_difficulty == value %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-outline-primary w-100">Filter</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Loops Grid -->
+<div class="row">
+    {% for loop in loops %}
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card loop-card h-100">
+            {% if loop.is_premium %}
+            <div class="card-header bg-warning text-dark">
+                <i class="bi bi-star-fill"></i> Premium Content
+            </div>
+            {% endif %}
+            
+            <div class="card-body d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <span class="badge bg-primary">{{ loop.get_category_display }}</span>
+                    <span class="badge bg-secondary">{{ loop.get_difficulty_display }}</span>
+                </div>
+                
+                <h5 class="card-title">{{ loop.title }}</h5>
+                <p class="card-text text-muted">{{ loop.description|truncatechars:150 }}</p>
+                
+                <div class="mt-auto">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <small class="text-muted">
+                            <i class="bi bi-person"></i> {{ loop.creator.username }}
+                        </small>
+                        <small class="text-muted">
+                            <i class="bi bi-calendar"></i> {{ loop.created_at|date:"M d, Y" }}
+                        </small>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'loop_detail' loop.pk %}" class="btn btn-outline-primary btn-sm">
+                            View Loop
+                        </a>
+                        {% if loop.is_premium %}
+                        <span class="badge bg-success">Ksh {{ loop.price }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card-footer bg-transparent">
+                <small class="text-muted">
+                    <i class="bi bi-eye"></i> {{ loop.views }} views • 
+                    <i class="bi bi-heart"></i> {{ loop.likes.count }} likes • 
+                    <i class="bi bi-chat"></i> {{ loop.comments.count }} comments
+                </small>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-info">
+            <h4 class="alert-heading">No loops found!</h4>
+            <p>Be the first to create a learning loop.</p>
+            <a href="{% url 'create_loop' %}" class="btn btn-primary">Create Your First Loop</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Pagination -->
+{% if loops.has_other_pages %}
+<nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+        {% if loops.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ loops.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.difficulty %}&difficulty={{ request.GET.difficulty }}{% endif %}">Previous</a>
+        </li>
+        {% endif %}
+        
+        {% for i in loops.paginator.page_range %}
+            {% if loops.number == i %}
+            <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+            {% else %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ i }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.difficulty %}&difficulty={{ request.GET.difficulty }}{% endif %}">{{ i }}</a>
+            </li>
+            {% endif %}
+        {% endfor %}
+        
+        {% if loops.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ loops.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.difficulty %}&difficulty={{ request.GET.difficulty }}{% endif %}">Next</a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}
