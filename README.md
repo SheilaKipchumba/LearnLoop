@@ -267,113 +267,6 @@ System configuration
 Overview
 LearnLoop integrates with Safaricom's M-Pesa Daraja API for seamless mobile payments in Kenya.
 
-Authentication Flow
-python
-# Get OAuth token
-POST https://sandbox.safaricom.co.ke/oauth/v1/generate
-Params: grant_type=client_credentials
-Auth: Basic Auth with Consumer Key/Secret
-Endpoints
-1. Initiate STK Push Payment
-Endpoint: POST /api/payments/initiate/
-
-Request:
-
-json
-{
-  "phone_number": "254712345678",
-  "amount": 100,
-  "account_reference": "LOOP_123",
-  "transaction_desc": "Payment for Python Functions Loop"
-}
-Response (Success):
-
-json
-{
-  "success": true,
-  "checkout_request_id": "ws_CO_19122024123456789",
-  "message": "Payment initiated successfully"
-}
-2. Payment Callback
-Endpoint: POST /payments/callback/
-
-Callback Data (from M-Pesa):
-
-json
-{
-  "Body": {
-    "stkCallback": {
-      "MerchantRequestID": "10001-1234567-1",
-      "CheckoutRequestID": "ws_CO_19122024123456789",
-      "ResultCode": 0,
-      "ResultDesc": "Success",
-      "CallbackMetadata": {
-        "Item": [
-          {"Name": "Amount", "Value": 100},
-          {"Name": "MpesaReceiptNumber", "Value": "NEF61H8J8F"},
-          {"Name": "PhoneNumber", "Value": "254712345678"}
-        ]
-      }
-    }
-  }
-}
-3. Check Payment Status
-Endpoint: GET /api/payments/status/{checkout_request_id}/
-
-Response:
-
-json
-{
-  "status": "completed",
-  "amount": 100,
-  "transaction_id": "NEF61H8J8F",
-  "phone_number": "254712345678"
-}
-Testing M-Pesa Integration
-Sandbox Testing
-Use these test credentials from Safaricom Developer Portal:
-
-Consumer Key/Secret: From Daraja portal
-
-Shortcode: 174379 (sandbox)
-
-Test Phone Numbers:
-
-254708374149 (always succeeds)
-
-254708374150 (always fails)
-
-254708374151 (always timeout)
-
-Test Flow
-Use sandbox credentials in .env
-
-Test with provided test numbers
-
-Check callback handling
-
-Verify database updates
-
-Test error scenarios
-
-Production Checklist
-Update to production credentials
-
-Configure SSL certificate
-
-Set up proper callback URL
-
-Implement error logging
-
-Add payment notifications
-
-Error Codes
-Code	Description	Resolution
-INVALID_PHONE	Invalid phone number format	Use format: 254XXXXXXXXX
-INSUFFICIENT_FUNDS	Insufficient M-Pesa balance	Top up M-Pesa account
-TRANSACTION_CANCELLED	User cancelled payment	Retry payment
-TIMEOUT	Payment timeout	Retry payment
-SYSTEM_ERROR	M-Pesa system error	Contact support
 
 
 Support Resources
@@ -450,15 +343,24 @@ Open Source Community for countless tools and libraries
 
  Project Status
 Component	Status
-Core Platform	✅ Production Ready
+Core Platform	✅ Production Ready 
+
 M-Pesa Integration	✅ Production Ready
+
 User Authentication	✅ Complete
+
 Content Management	✅ Complete
+
 Payment System	✅ Complete
+
 Admin Dashboard	✅ Complete
+
 Mobile Responsive	✅ Complete
+
 Testing Suite	⚠️ In Progress
+
 Performance Optimization	⚠️ In Progress
+
  Future Roadmap
 Phase 1 (Q1 2025)
 Advanced analytics dashboard
