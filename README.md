@@ -1,7 +1,11 @@
 LearnLoop - Peer-to-Peer Micro-Learning Platform
 
+
+
 Overview
 LearnLoop is a Django-based peer-to-peer micro-learning platform that enables students to create, share, and monetize bite-sized educational content called "Loops". The platform facilitates direct student-to-student learning while aligning with UN Sustainable Development Goal 4: Quality Education.
+
+
 
 Core Problem & Solution
 Problem: Students struggle with complex topics, knowledge sharing is fragmented, and students with expertise lack monetization channels.
@@ -16,6 +20,9 @@ Creators monetize quality educational content through M-Pesa integration
 
 Community-driven knowledge sharing flourishes
 
+
+
+
 SDG Alignment
 Primary: SDG 4 - Quality Education
 4.1: Ensure inclusive and equitable quality education
@@ -23,6 +30,9 @@ Primary: SDG 4 - Quality Education
 4.4: Increase youth with relevant skills for employment
 
 4.7: Education for sustainable development
+
+
+
 
 Impact Metrics:
  Accessibility: Free basic content with affordable premium options
@@ -33,6 +43,10 @@ Impact Metrics:
 
  Community Building: Collaborative learning environment
 
+
+ 
+ 
+ 
  Features
 Core Features
 User Authentication: Registration, login, profile management
@@ -49,6 +63,9 @@ Responsive Design: Mobile-friendly Bootstrap interface
 
 Admin Dashboard: Content moderation and user management
 
+
+ 
+ 
  Technology Stack
 Backend
 Django 4.2 (Python web framework)
@@ -85,6 +102,9 @@ pip (Python package manager)
 Git
 
 Web browser (Chrome, Firefox, etc.)
+
+
+
 
 Step-by-Step Setup
 1. Clone the Repository
@@ -133,6 +153,10 @@ Visit http://127.0.0.1:8000 in your browser!
 
 
 
+
+ 
+ 
+ 
  Project Structure
 text
 learnloop/
@@ -166,6 +190,10 @@ learnloop/
 |
 ├── templates/          # Base templates
 │   └── base.html      # Main template with 
+ 
+ 
+ 
+ 
  User Guide
 For Learners (Students)
 Getting Started
@@ -196,6 +224,9 @@ Premium Access: Pay per premium loop
 Learning History: Track your progress
 
 Saved Loops: Bookmark loops for later
+
+
+
 
 For Creators (Teachers or students)
 Creating Loops
@@ -263,6 +294,9 @@ Platform analytics
 
 System configuration
 
+
+ 
+ 
  M-Pesa API Documentation
 Overview
 LearnLoop integrates with Safaricom's M-Pesa Daraja API for seamless mobile payments in Kenya.
