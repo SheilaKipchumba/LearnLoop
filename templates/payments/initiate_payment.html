@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Buy Premium Access</h2>
+    <p>You are purchasing premium access for <strong>{{ loop.title }}</strong></p>
+    <p>Amount: <strong>KES {{ loop.price }}</strong></p>
+
+    <form method="POST" class="mt-3">
+        {% csrf_token %}
+        <label>Enter M-Pesa Number</label>
+        <input type="text" name="phone" class="form-control" placeholder="2547XXXXXXXX" required>
+        <button class="btn btn-success mt-3">Pay Now</button>
+    </form>
+</div>
+{% endblock %}

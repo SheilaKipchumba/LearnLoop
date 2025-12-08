@@ -20,16 +20,13 @@
     <div class="card-body">
         <form method="get" class="row g-3">
             <div class="col-md-4">
-                <input type="text" name="q" class="form-control" placeholder="Search loops..." 
-                       value="{{ request.GET.q|default:'' }}">
+                <input type="text" name="q" class="form-control" placeholder="Search loops..." value="{{ request.GET.q|default:'' }}">
             </div>
             <div class="col-md-3">
                 <select name="category" class="form-select">
                     <option value="all">All Categories</option>
                     {% for value, label in categories %}
-                        <option value="{{ value }}" {% if current_category == value %}selected{% endif %}>
-                            {{ label }}
-                        </option>
+                        <option value="{{ value }}" {% if current_category == value %}selected{% endif %}>{{ label }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -37,9 +34,7 @@
                 <select name="difficulty" class="form-select">
                     <option value="all">All Levels</option>
                     {% for value, label in difficulties %}
-                        <option value="{{ value }}" {% if current_difficulty == value %}selected{% endif %}>
-                            {{ label }}
-                        </option>
+                        <option value="{{ value }}" {% if current_difficulty == value %}selected{% endif %}>{{ label }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -80,14 +75,20 @@
                         </small>
                     </div>
                     
-                    <div class="d-flex justify-content-between">
-                        <a href="{% url 'loop_detail' loop.pk %}" class="btn btn-outline-primary btn-sm">
-                            View Loop
-                        </a>
-                        {% if loop.is_premium %}
-                        <span class="badge bg-success">Ksh {{ loop.price }}</span>
-                        {% endif %}
-                    </div>
+                   <div class="d-flex justify-content-between">
+    {% if loop.is_premium %}
+        {% if user.is_authenticated and user in loop.is_purchased_by.all %}
+            <a href="{% url 'loop_detail' loop.pk %}" class="btn btn-success btn-sm">Access</a>
+        {% else %}
+            <a href="{% url 'payments:initiate' loop.pk %}" class="btn btn-warning btn-sm">
+                Buy Ksh {{ loop.price }}
+            </a>
+        {% endif %}
+    {% else %}
+        <a href="{% url 'loop_detail' loop.pk %}" class="btn btn-outline-primary btn-sm">View Loop</a>
+    {% endif %}
+</div>
+
                 </div>
             </div>
             
@@ -111,7 +112,7 @@
     {% endfor %}
 </div>
 
-<!-- Pagination -->
+<!-- Pagination (no changes needed) -->
 {% if loops.has_other_pages %}
 <nav aria-label="Page navigation">
     <ul class="pagination justify-content-center">

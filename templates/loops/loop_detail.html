@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
+{% load custom_filters %}
 
 {% block title %}{{ loop.title }} - LearnLoop{% endblock %}
 
 {% block content %}
 <div class="row">
     <div class="col-md-8">
-        <!-- Main Loop Content -->
         <div class="card mb-4">
             <div class="card-body">
                 {% if loop.is_premium %}
@@ -13,9 +13,8 @@
                     <i class="bi bi-star-fill"></i> Premium Content - Ksh {{ loop.price }}
                 </div>
                 {% endif %}
-                
+
                 <h1 class="card-title">{{ loop.title }}</h1>
-                
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <div>
                         <span class="badge bg-primary">{{ loop.get_category_display }}</span>
@@ -25,30 +24,51 @@
                         <i class="bi bi-calendar"></i> {{ loop.created_at|date:"F d, Y" }}
                     </small>
                 </div>
-                
+
                 <div class="mb-4">
                     <h5>Description</h5>
                     <p class="lead">{{ loop.description }}</p>
                 </div>
-                
+
                 {% if loop.video_url %}
                 <div class="mb-4">
                     <h5>Video</h5>
                     <div class="ratio ratio-16x9">
-                        <iframe src="{{ loop.video_url|replace:'watch?v=','embed/' }}" 
-                                frameborder="0" 
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                                allowfullscreen></iframe>
+                        <iframe src="{{ loop.video_url|safe_embed_url }}" frameborder="0" allowfullscreen></iframe>
                     </div>
                 </div>
                 {% endif %}
-                
-                <div class="mb-4">
-                    <h5>Content</h5>
-                    <div class="border rounded p-3 bg-light">
-                        {{ loop.content|linebreaks }}
-                    </div>
-                </div>
+
+                <!-- PREMIUM ACCESS -->
+                 {% if loop.is_premium %}
+    {% if user_has_access %}
+        <div class="alert alert-success mt-3">
+            <i class="bi bi-unlock-fill"></i> You have premium access.
+        </div>
+
+        <div class="border rounded p-3 bg-warning-subtle mt-3">
+            <h5>Premium Content</h5>
+            {{ loop.content|linebreaks }}
+        </div>
+    {% else %}
+        <div class="alert alert-warning mt-3">
+            <i class="bi bi-lock-fill"></i> This premium content is locked.
+        </div>
+
+        <a href="{% url 'payments:initiate' loop.pk %}" class="btn btn-primary">
+            Buy Premium Access – KES {{ loop.price }}
+        </a>
+    {% endif %}
+{% else %}
+    <!-- Non-premium normal content -->
+    <div class="mb-4">
+        <h5>Content</h5>
+        <div class="border rounded p-3 bg-light">
+            {{ loop.content|linebreaks }}
+        </div>
+    </div>
+{% endif %}
+
                 
                 {% if loop.attachment %}
                 <div class="mb-4">
@@ -58,27 +78,25 @@
                     </a>
                 </div>
                 {% endif %}
-                
+
                 <!-- Loop Stats -->
                 <div class="d-flex justify-content-between align-items-center mt-4">
                     <div class="btn-group">
                         <form method="post" action="{% url 'like_loop' loop.pk %}" class="d-inline">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-outline-danger">
-                                <i class="bi bi-heart{% if not is_liked %}-fill{% endif %}"></i>
+                                <i class="bi bi-heart{% if is_liked %}-fill{% endif %}"></i>
                                 {{ likes_count }} Like{{ likes_count|pluralize }}
                             </button>
                         </form>
                         <button class="btn btn-outline-secondary" disabled>
-                            <i class="bi bi-chat"></i>
-                            {{ comments_count }} Comment{{ comments_count|pluralize }}
+                            <i class="bi bi-chat"></i> {{ comments_count }} Comment{{ comments_count|pluralize }}
                         </button>
                         <button class="btn btn-outline-info" disabled>
-                            <i class="bi bi-eye"></i>
-                            {{ loop.views }} View{{ loop.views|pluralize }}
+                            <i class="bi bi-eye"></i> {{ loop.views }} View{{ loop.views|pluralize }}
                         </button>
                     </div>
-                    
+
                     {% if user == loop.creator %}
                     <div class="btn-group">
                         <a href="{% url 'edit_loop' loop.pk %}" class="btn btn-outline-warning">Edit</a>
@@ -86,28 +104,19 @@
                     </div>
                     {% endif %}
                 </div>
-                
-                <div class="mt-3">
-                    <small class="text-muted">
-                        Created by: <strong>{{ loop.creator.username }}</strong>
-                    </small>
-                </div>
             </div>
         </div>
-        
+
         <!-- Comments Section -->
         <div class="card">
             <div class="card-header">
                 <h5 class="mb-0">Comments ({{ comments_count }})</h5>
             </div>
             <div class="card-body">
-                <!-- Comment Form -->
                 {% if user.is_authenticated %}
                 <form method="post" class="mb-4">
                     {% csrf_token %}
-                    <div class="mb-3">
-                        {{ form.content }}
-                    </div>
+                    <div class="mb-3">{{ form.content }}</div>
                     <button type="submit" class="btn btn-primary">Post Comment</button>
                 </form>
                 {% else %}
@@ -115,8 +124,7 @@
                     <a href="{% url 'login' %}?next={{ request.path }}">Login</a> to post a comment.
                 </div>
                 {% endif %}
-                
-                <!-- Comments List -->
+
                 {% for comment in comments %}
                 <div class="card mb-3">
                     <div class="card-body">
@@ -133,30 +141,23 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Sidebar -->
     <div class="col-md-4">
-        <!-- Creator Info -->
         <div class="card mb-4">
             <div class="card-header">
                 <h5 class="mb-0">Creator</h5>
             </div>
             <div class="card-body text-center">
-                <div class="mb-3">
-                    <i class="bi bi-person-circle" style="font-size: 3rem;"></i>
-                </div>
+                <i class="bi bi-person-circle" style="font-size: 3rem;"></i>
                 <h5>{{ loop.creator.username }}</h5>
                 <p class="text-muted">Joined {{ loop.creator.date_joined|date:"M Y" }}</p>
-                <a href="#" class="btn btn-outline-primary btn-sm">View Profile</a>
             </div>
         </div>
-        
-        <!-- Similar Loops -->
+
         {% if similar_loops %}
         <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0">Similar Loops</h5>
-            </div>
+            <div class="card-header"><h5 class="mb-0">Similar Loops</h5></div>
             <div class="card-body">
                 {% for similar in similar_loops %}
                 <div class="card mb-2">

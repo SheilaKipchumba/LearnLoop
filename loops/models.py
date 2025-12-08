@@ -41,8 +41,8 @@ class Loop(models.Model):
     
     # Premium content
     is_premium = models.BooleanField(default=False)
-    price = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
-    
+    price = models.PositiveIntegerField(default=0)
+    is_purchased_by = models.ManyToManyField(User, blank=True, related_name='purchased_loops')
     # Stats
     views = models.PositiveIntegerField(default=0)
     
